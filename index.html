@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRITLE WALLET 🪙</title>
+    <style>
+        body {
+            background-color: #808080; /* Grey background */
+            color: #9370DB; /* Light Purple text color */
+            font-family: Arial, sans-serif;
+        }
+
+        #container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #D3D3D3; /* Light Grey container background */
+            border-radius: 10px;
+            margin-top: 50px;
+        }
+
+        button {
+            background-color: #9370DB; /* Light Purple button color */
+            color: #fff; /* White text color */
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #663399; /* Darker Purple on hover */
+        }
+
+        #balance, #transfer, #receive, #withdrawal {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="container">
+    <h1>BRITLE WALLET 🪙</h1>
+
+    <form id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" required>
+        <br>
+        <button type="button" onclick="login()">Login</button>
+    </form>
+
+    <form id="signupForm" style="display: none;">
+        <label for="newUsername">New Username:</label>
+        <input type="text" id="newUsername" required>
+        <br>
+        <label for="newPassword">New Password:</label>
+        <input type="password" id="newPassword" required>
+        <br>
+        <button type="button" onclick="signup()">Sign Up</button>
+        <button type="button" onclick="goToLoginPage()">Back</button>
+    </form>
+
+    <div id="welcomeMessage" style="display: none;"></div>
+
+    <div id="options" style="display: none;">
+        <h2>Options:</h2>
+        <button onclick="showBalance()">Check Balance</button>
+        <div id="balance"></div>
+        <button onclick="showTransfer()">Transfer</button>
+        <div id="transfer"></div>
+        <button onclick="showReceive()">Receive</button>
+        <div id="receive"></div>
+        <button onclick="showWithdrawal()">Withdrawal</button>
+        <div id="withdrawal"></div>
+        <br>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <p id="signupLink">Don't have an account? <a href="#" onclick="showSignupForm()">Sign Up</a></p>
+</div>
+
+<script>
+    let users = [];
+
+    function login() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // Check if the entered username and password match the specific credentials
+        if (username.toLowerCase() === 'gianna' && password === 'lynch1234') {
+            // If matched, display customized welcome message
+            loggedIn = true;
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('signupLink').style.display = 'none';
+            document.getElementById('welcomeMessage').innerText = 'Welcome Gianna Lynch!';
+            document.getElementById('welcomeMessage').style.display = 'block';
+            document.getElementById('options').style.display = 'block';
+        } else {
+            // If not matched, display an alert for invalid credentials
+            alert('Invalid credentials. Please try again.');
+        }
+    }
+
+    function signup() {
+        const newUsername = document.getElementById('newUsername').value;
+        const newPassword = document.getElementById('newPassword').value;
+
+        // Check if the username already exists
+        if (users.some(user => user.username === newUsername)) {
+            alert('Username already exists. Please choose another username.');
+            return;
+        }
+
+        // Check if the user is authorized by the investment agency
+        const authorized = false; // Assuming initially not authorized
+        if (!authorized) {
+            alert('YOU HAVE TO BE AUTHORIZED BY THE INVESTMENT AGENCY');
+            return;
+        }
+
+        // Set initial balance based on username
+        let initialBalance = "$0.00";
+        if (newUsername.toLowerCase() === "gianna") {
+            initialBalance = "$20,000.00 (0.47 Bitcoin)";
+        }
+
+        // Create a new user object
+        const newUser = {
+            username: newUsername,
+            password: newPassword,
+            balance: initialBalance
+        };
+
+        // Add the new user to the users array
+        users.push(newUser);
+
+        // Alert the user about successful signup
+        alert('Signup successful! Welcome to BRITLE WALLET. Please log in with your new account.');
+
+        // Clear input fields
+        document.getElementById('newUsername').value = '';
+        document.getElementById('newPassword').value = '';
+
+        // Hide signup form
+        document.getElementById('signupForm').style.display = 'none';
+
+        // Display dashboard for the newly signed up user
+        showDashboard(newUsername);
+    }
+
+    // Function to display dashboard for the signed up user
+    function showDashboard(username) {
+        // Hide login form and signup link
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('signupLink').style.display = 'none';
+
+        // Display welcome message and options for the user
+        document.getElementById('welcomeMessage').innerText = 'Welcome ' + username + '!';
+        document.getElementById('welcomeMessage').style.display = 'block';
+        document.getElementById('options').style.display = 'block';
+    }
+
+    function goToLoginPage() {
+        document.getElementById('signupForm').style.display = 'none';
+        document.getElementById('loginForm').style.display = 'block';
+    }
+
+    function showSignupForm() {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('signupForm').style.display = 'block';
+    }
+
+    function showBalance() {
+        hideAllOptions(); // Hide all options
+        const balanceElement = document.getElementById('balance');
+        balanceElement.innerText = 'Available Balance: $20,000 (0.47 Bitcoin)';
+        balanceElement.style.display = 'block';
+    }
+
+    function showTransfer() {
+        hideAllOptions(); // Hide all options
+        const transferElement = document.getElementById('transfer');
+        transferElement.innerHTML = `
+            <h3>Transfer Funds:</h3>
+            <label for="bitcoinAddress">Enter Bitcoin Wallet Address:</label>
+            <input type="text" id="bitcoinAddress" placeholder="Paste Bitcoin wallet address here" required>
+            <br>
+            <button onclick="transferFunds()">Transfer</button>
+        `;
+        transferElement.style.display = 'block';
+    }
+
+    function transferFunds() {
+        const bitcoinAddress = document.getElementById('bitcoinAddress').value;
+        // Implement the logic to transfer funds to the specified Bitcoin wallet address
+        // For demonstration purposes, let's just show the bull run message
+        const bullRunPercentage = 95;
+        if (bullRunPercentage >= 95) {
+            alert(`Your Bull Run is currently at ${bullRunPercentage}% and you are almost qualified to carry out this operation. Funds will be transferred to: ${bitcoinAddress}`);
+            // You may implement the actual transfer logic here
+        } else {
+            alert('You need to complete the bull run to perform this operation.');
+        }
+    }
+
+    function showReceive() {
+        hideAllOptions(); // Hide all options
+        const receiveElement = document.getElementById('receive');
+        receiveElement.innerText = 'Your BTC Wallet Address: bc1qpq2mvysejacsz5a2es3fgap7jmr9v6lzndxt88';
+        receiveElement.style.display = 'block';
+    }
+
+    function showWithdrawal() {
+        hideAllOptions(); // Hide all options
+        const withdrawalElement = document.getElementById('withdrawal');
+        withdrawalElement.innerHTML = `
+            <h3>List of Amounts for Withdrawal:</h3>
+            <ul>
+                <li><button onclick="checkBullRun(100)">Withdraw $100</button></li>
+                <li><button onclick="checkBullRun(200)">Withdraw $200</button></li>
+                <li><button onclick="checkBullRun(500)">Withdraw $500</button></li>
+                <li><button onclick="checkBullRun(1000)">Withdraw $1000</button></li>
+            </ul>
+        `;
+        withdrawalElement.style.display = 'block';
+    }
+
+    function hideAllOptions() {
+        document.getElementById('balance').style.display = 'none';
+        document.getElementById('transfer').style.display = 'none';
+        document.getElementById('receive').style.display = 'none';
+        document.getElementById('withdrawal').style.display = 'none';
+    }
+
+    function checkBullRun(amount) {
+        // Assuming bullRunPercentage represents the current percentage of the bull run completion
+        const bullRunPercentage = 95;
+        if (bullRunPercentage >= 95) {
+            alert(`Your Bull Run is currently at ${bullRunPercentage}% and you are almost qualified to carry out this operation.`);
+            // You may implement the actual withdrawal logic here
+        } else {
+            alert('You need to complete the bull run to access this withdrawal amount.');
+        }
+    }
+
+    function logout() {
+        loggedIn = false;
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('signupLink').style.display = 'block';
+        document.getElementById('signupForm').style.display = 'none';
+        document.getElementById('welcomeMessage').style.display = 'none';
+        document.getElementById('options').style.display = 'none';
+        document.getElementById('balance').style.display = 'none';
+        document.getElementById('transfer').style.display = 'none';
+        document.getElementById('receive').style.display = 'none';
+        document.getElementById('withdrawal').style.display = 'none';
+    }
+</script>
+
+</body>
+</html>
